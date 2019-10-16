@@ -29,8 +29,35 @@ def password_encrypt (unencrypted_message, key):
     #Fill in your code here.
     # If you can't get it working, you may want to put some temporary code here
     # While working on other parts of the program
-    pass
-
+    encrypted_message = ""
+    """
+    Start with empty result
+    For each char in text
+        Find ordinal value
+        Add encryption key to ordinal value
+        While number is > 126 then subtract 94
+        While number is < 32 then add 94
+        Convert back to character value
+        Add result
+    ###################
+    min_limit = 32
+    max_limit = 126
+    For each char in text
+        Find ordinal value
+        new value = ordinal value - min_limit + encryption key
+        find remainder of new value divided by max_limit - min_limit + 1
+        add min_limit back in
+        convert back to char value
+        add result
+    """
+    min_limit = 32
+    max_limit = 126
+    for char in unencrypted_message:
+        shifted_value = ord(unencrypted_message) - min_limit + encryption_key
+        num = (shifted_value % max_limit - min_limit) + 1
+        num += min_limit
+        encrypted_message += chr(num)
+    return encrypted_message
 def load_password_file(file_name):
     """Loads a password file.  The file must be in the same directory as the .py file
 
@@ -61,7 +88,7 @@ def add_entry(website, password):
     :param website (string) The website for the entry
     :param password (string) The unencrypted password for the entry
     """
-    #Fill in your code here
+    new_entry = []
     pass
 
 def lookup_password(website):
