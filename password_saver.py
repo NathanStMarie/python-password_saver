@@ -18,6 +18,7 @@ What would you like to do:
 6. Quit program
 Please enter a number (1-6)"""
 
+
 def password_encrypt (unencrypted_message, key):
     """Returns an encrypted message using a caesar cypher
 
@@ -73,12 +74,32 @@ def password_encrypt (unencrypted_message, key):
         encrypted_message += chr(o)
     return encrypted_message
 
+
+print(password_encrypt("HappyJoy", 16))
+
+
+
+def get_ord_list(term):
+    ord_list = []
+    for char in term:
+        ord_list.append(ord(char))
+    return ord_list
+
+
+
+print(get_ord_list("HappyJoy"))
+print(get_ord_list("XqffoZeo"))
+print(get_ord_list(password_encrypt("HappyJoy", 16)))
 def load_password_file(file_name):
     """Loads a password file.  The file must be in the same directory as the .py file
 
     :param file_name (string) The file to load.  Must be a pickle file in the correct format
     """
-    entries, encryption_key = pickle.load(open(file_name, 'rb'))
+    with open(file_name, 'rb') as f:
+        loaded_entries, loaded_encryption_key = pickle.load(f)
+    global entries, encryption_key
+    entries = loaded_entries
+    encryption_key = loaded_encryption_key
 
 def save_password_file(file_name):
     """Saves a password file.  The file will be created if it doesn't exist.
@@ -143,7 +164,6 @@ def lookup_password(website):
         return password_encrypt(entries[index][1], -(encryption_key))
     else:
         return None
-
 
 
 while True:
