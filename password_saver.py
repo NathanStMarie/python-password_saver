@@ -49,21 +49,36 @@ def password_encrypt (unencrypted_message, key):
         add min_limit back in
         convert back to char value
         add result
-    """
+    
     min_limit = 32
     max_limit = 126
     for char in unencrypted_message:
-        shifted_value = ord(unencrypted_message) - min_limit + encryption_key
+        shifted_value = ord(char) - min_limit + key
         num = (shifted_value % max_limit - min_limit) + 1
         num += min_limit
         encrypted_message += chr(num)
     return encrypted_message
+    """
+    encrypted_message = ""
+    ord_list = []
+    for char in unencrypted_message:
+        new_ord = ord(char) + key
+        if new_ord > 126:
+            ord_list.append(32 + (new_ord - 126))
+        elif new_ord < 32:
+            ord_list.append(126 - (32 - new_ord))
+        else:
+            ord_list.append(ord(char) + key)
+    for o in ord_list:
+        encrypted_message += chr(o)
+    return encrypted_message
+
 def load_password_file(file_name):
     """Loads a password file.  The file must be in the same directory as the .py file
 
     :param file_name (string) The file to load.  Must be a pickle file in the correct format
     """
-    entries, encryption_key = pickle.load(file_name, 'rb')
+    entries, encryption_key = pickle.load(open(file_name, 'rb'))
 
 def save_password_file(file_name):
     """Saves a password file.  The file will be created if it doesn't exist.
@@ -88,8 +103,10 @@ def add_entry(website, password):
     :param website (string) The website for the entry
     :param password (string) The unencrypted password for the entry
     """
-    new_entry = []
-    pass
+    encrypted_password = password_encrypt(password, encryption_key)
+    new_entry = [website, encrypted_password]
+    entries.append(new_entry)
+
 
 def lookup_password(website):
     """Lookup the password for a given website
@@ -114,8 +131,19 @@ def lookup_password(website):
     :param website (string) The website for the entry to lookup
     :return: Returns an unencrypted password.  Returns None if no entry is found
     """
-    #Fill in your code here
-    pass
+    website_in_entries = False
+    index = 0
+    for i, entry in enumerate(entries):
+        if entry[0] == website:
+            website_in_entries = True
+            index = i
+            break
+    if website_in_entries:
+        # return decrypted password
+        return password_encrypt(entries[index][1], -(encryption_key))
+    else:
+        return None
+
 
 
 while True:
@@ -142,7 +170,7 @@ while True:
         website = input()
         print("What is the password?")
         unencrypted_password = input()
-        add_entry(website, password)
+        add_entry(website, unencrypted_password)
 
     if(choice == '4'): #Save the passwords to a file
             save_password_file(password_file_name)
